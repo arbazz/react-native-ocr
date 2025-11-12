@@ -1,0 +1,8 @@
+//
+//  Bridge.h
+//  NitroOcr
+//
+//  Created by Marc Rousavy on 22.07.24.
+//
+
+#pragma once
