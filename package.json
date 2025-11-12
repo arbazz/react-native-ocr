@@ -69,7 +69,9 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": "*"
+    "react-native-nitro-modules": "*",
+    "react-native-vision-camera": ">=4.0.0",
+    "react-native-reanimated": ">=4.0.0"
   },
   "eslintConfig": {
     "root": true,

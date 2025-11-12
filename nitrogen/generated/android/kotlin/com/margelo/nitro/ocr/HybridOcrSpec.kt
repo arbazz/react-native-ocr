@@ -10,6 +10,7 @@ package com.margelo.nitro.ocr
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -48,6 +49,10 @@ abstract class HybridOcrSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun scan(input: String): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun scanFrame(frame: Frame): Promise<String>
 
   private external fun initHybrid(): HybridData
 

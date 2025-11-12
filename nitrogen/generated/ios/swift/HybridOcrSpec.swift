@@ -7,6 +7,7 @@
 
 import Foundation
 import NitroModules
+import NitroModules
 
 /// See ``HybridOcrSpec``
 public protocol HybridOcrSpec_protocol: HybridObject {
@@ -15,6 +16,7 @@ public protocol HybridOcrSpec_protocol: HybridObject {
 
   // Methods
   func scan(input: String) throws -> String
+  func scanFrame(frame: Frame) throws -> Promise<String>
 }
 
 public extension HybridOcrSpec_protocol {

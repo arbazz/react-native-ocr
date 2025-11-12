@@ -13,9 +13,12 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-
+// Forward declaration of `Frame` to properly resolve imports.
+namespace margelo::nitro::ocr { struct Frame; }
 
 #include <string>
+#include <NitroModules/Promise.hpp>
+#include "Frame.hpp"
 
 namespace margelo::nitro::ocr {
 
@@ -49,6 +52,7 @@ namespace margelo::nitro::ocr {
     public:
       // Methods
       virtual std::string scan(const std::string& input) = 0;
+      virtual std::shared_ptr<Promise<std::string>> scanFrame(const Frame& frame) = 0;
 
     protected:
       // Hybrid Setup

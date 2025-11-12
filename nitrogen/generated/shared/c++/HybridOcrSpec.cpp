@@ -15,6 +15,7 @@ namespace margelo::nitro::ocr {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("scan", &HybridOcrSpec::scan);
+      prototype.registerHybridMethod("scanFrame", &HybridOcrSpec::scanFrame);
     });
   }
 

@@ -7,9 +7,14 @@
 
 #include "JHybridOcrSpec.hpp"
 
-
+// Forward declaration of `Frame` to properly resolve imports.
+namespace margelo::nitro::ocr { struct Frame; }
 
 #include <string>
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "Frame.hpp"
+#include "JFrame.hpp"
 
 namespace margelo::nitro::ocr {
 
@@ -47,6 +52,22 @@ namespace margelo::nitro::ocr {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* input */)>("scan");
     auto __result = method(_javaPart, jni::make_jstring(input));
     return __result->toStdString();
+  }
+  std::shared_ptr<Promise<std::string>> JHybridOcrSpec::scanFrame(const Frame& frame) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFrame> /* frame */)>("scanFrame");
+    auto __result = method(_javaPart, JFrame::fromCpp(frame));
+    return [&]() {
+      auto __promise = Promise<std::string>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JString>(__boxedResult);
+        __promise->resolve(__result->toStdString());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::ocr

@@ -8,11 +8,15 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `Frame` to properly resolve imports.
+namespace margelo::nitro::ocr { struct Frame; }
 // Forward declaration of `HybridOcrSpec` to properly resolve imports.
 namespace margelo::nitro::ocr { class HybridOcrSpec; }
 
 // Include C++ defined types
+#include "Frame.hpp"
 #include "HybridOcrSpec.hpp"
+#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>

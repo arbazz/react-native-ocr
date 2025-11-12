@@ -12,9 +12,12 @@
 // Forward declaration of `HybridOcrSpec_cxx` to properly resolve imports.
 namespace NitroOcr { class HybridOcrSpec_cxx; }
 
-
+// Forward declaration of `Frame` to properly resolve imports.
+namespace margelo::nitro::ocr { struct Frame; }
 
 #include <string>
+#include <NitroModules/Promise.hpp>
+#include "Frame.hpp"
 
 #include "NitroOcr-Swift-Cxx-Umbrella.hpp"
 
@@ -62,6 +65,14 @@ namespace margelo::nitro::ocr {
     // Methods
     inline std::string scan(const std::string& input) override {
       auto __result = _swiftPart.scan(input);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::string>> scanFrame(const Frame& frame) override {
+      auto __result = _swiftPart.scanFrame(std::forward<decltype(frame)>(frame));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

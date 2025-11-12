@@ -55,6 +55,7 @@ namespace margelo::nitro::ocr {
   public:
     // Methods
     std::string scan(const std::string& input) override;
+    std::shared_ptr<Promise<std::string>> scanFrame(const Frame& frame) override;
 
   private:
     friend HybridBase;

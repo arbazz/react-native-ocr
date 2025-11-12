@@ -15,7 +15,8 @@
     "react-native": "0.82.1",
     "react-native-nitro-modules": "^0.31.5",
     "react-native-ocr": "file:..",
-    "react-native-safe-area-context": "^5.5.2"
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-vision-camera": "^4.7.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
