@@ -16,6 +16,9 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridOcrSpec.hpp"
+#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___.hpp"
+#include "JFunc_std__shared_ptr_Promise_std__string__.hpp"
+#include "JFunc_std__shared_ptr_Promise_NativeBuffer__.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::ocr {
@@ -28,6 +31,9 @@ int initialize(JavaVM* vm) {
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
     margelo::nitro::ocr::JHybridOcrSpec::registerNatives();
+    margelo::nitro::ocr::JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____cxx::registerNatives();
+    margelo::nitro::ocr::JFunc_std__shared_ptr_Promise_std__string___cxx::registerNatives();
+    margelo::nitro::ocr::JFunc_std__shared_ptr_Promise_NativeBuffer___cxx::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(

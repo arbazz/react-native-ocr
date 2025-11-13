@@ -53,6 +53,14 @@ abstract class HybridOcrSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun scanFrame(frame: Frame): Promise<String>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun scanImage(path: String): Promise<String>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun scanImageWithRegion(path: String, x: Double, y: Double, width: Double, height: Double): Promise<String>
 
   private external fun initHybrid(): HybridData
 

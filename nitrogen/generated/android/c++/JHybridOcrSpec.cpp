@@ -9,12 +9,31 @@
 
 // Forward declaration of `Frame` to properly resolve imports.
 namespace margelo::nitro::ocr { struct Frame; }
+// Forward declaration of `Orientation` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class Orientation; }
+// Forward declaration of `PixelFormat` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class PixelFormat; }
+// Forward declaration of `NativeBuffer` to properly resolve imports.
+namespace margelo::nitro::ocr { struct NativeBuffer; }
 
 #include <string>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include "Frame.hpp"
 #include "JFrame.hpp"
+#include "Orientation.hpp"
+#include "JOrientation.hpp"
+#include "PixelFormat.hpp"
+#include "JPixelFormat.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
+#include <functional>
+#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___.hpp"
+#include <NitroModules/JArrayBuffer.hpp>
+#include <NitroModules/JUnit.hpp>
+#include "JFunc_std__shared_ptr_Promise_std__string__.hpp"
+#include "NativeBuffer.hpp"
+#include "JFunc_std__shared_ptr_Promise_NativeBuffer__.hpp"
+#include "JNativeBuffer.hpp"
 
 namespace margelo::nitro::ocr {
 
@@ -56,6 +75,38 @@ namespace margelo::nitro::ocr {
   std::shared_ptr<Promise<std::string>> JHybridOcrSpec::scanFrame(const Frame& frame) {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFrame> /* frame */)>("scanFrame");
     auto __result = method(_javaPart, JFrame::fromCpp(frame));
+    return [&]() {
+      auto __promise = Promise<std::string>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JString>(__boxedResult);
+        __promise->resolve(__result->toStdString());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<std::string>> JHybridOcrSpec::scanImage(const std::string& path) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* path */)>("scanImage");
+    auto __result = method(_javaPart, jni::make_jstring(path));
+    return [&]() {
+      auto __promise = Promise<std::string>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JString>(__boxedResult);
+        __promise->resolve(__result->toStdString());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<std::string>> JHybridOcrSpec::scanImageWithRegion(const std::string& path, double x, double y, double width, double height) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* path */, double /* x */, double /* y */, double /* width */, double /* height */)>("scanImageWithRegion");
+    auto __result = method(_javaPart, jni::make_jstring(path), x, y, width, height);
     return [&]() {
       auto __promise = Promise<std::string>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {

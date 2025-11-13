@@ -12,13 +12,24 @@
 namespace margelo::nitro::ocr { struct Frame; }
 // Forward declaration of `HybridOcrSpec` to properly resolve imports.
 namespace margelo::nitro::ocr { class HybridOcrSpec; }
+// Forward declaration of `NativeBuffer` to properly resolve imports.
+namespace margelo::nitro::ocr { struct NativeBuffer; }
+// Forward declaration of `Orientation` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class Orientation; }
+// Forward declaration of `PixelFormat` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class PixelFormat; }
 
 // Include C++ defined types
 #include "Frame.hpp"
 #include "HybridOcrSpec.hpp"
+#include "NativeBuffer.hpp"
+#include "Orientation.hpp"
+#include "PixelFormat.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
+#include <functional>
 #include <memory>
 #include <string>
 

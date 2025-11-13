@@ -9,7 +9,8 @@ package com.margelo.nitro.ocr
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-
+import com.margelo.nitro.core.ArrayBuffer
+import com.margelo.nitro.core.Promise
 
 /**
  * Represents the JavaScript object/struct "Frame".
@@ -19,15 +20,46 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class Frame(
   @DoNotStrip
   @Keep
+  val isValid: Boolean,
+  @DoNotStrip
+  @Keep
   val width: Double,
   @DoNotStrip
   @Keep
   val height: Double,
   @DoNotStrip
   @Keep
-  val data: String
+  val bytesPerRow: Double,
+  @DoNotStrip
+  @Keep
+  val planesCount: Double,
+  @DoNotStrip
+  @Keep
+  val isMirrored: Boolean,
+  @DoNotStrip
+  @Keep
+  val timestamp: Double,
+  @DoNotStrip
+  @Keep
+  val orientation: Orientation,
+  @DoNotStrip
+  @Keep
+  val pixelFormat: PixelFormat,
+  @DoNotStrip
+  @Keep
+  val toArrayBuffer: Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___,
+  @DoNotStrip
+  @Keep
+  val toString: Func_std__shared_ptr_Promise_std__string__,
+  @DoNotStrip
+  @Keep
+  val getNativeBuffer: Func_std__shared_ptr_Promise_NativeBuffer__
 ) {
-  /* primary constructor */
+  /**
+   * Create a new instance of Frame from Kotlin
+   */
+  constructor(isValid: Boolean, width: Double, height: Double, bytesPerRow: Double, planesCount: Double, isMirrored: Boolean, timestamp: Double, orientation: Orientation, pixelFormat: PixelFormat, toArrayBuffer: () -> Promise<ArrayBuffer>, toString: () -> Promise<String>, getNativeBuffer: () -> Promise<NativeBuffer>):
+         this(isValid, width, height, bytesPerRow, planesCount, isMirrored, timestamp, orientation, pixelFormat, Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____java(toArrayBuffer), Func_std__shared_ptr_Promise_std__string___java(toString), Func_std__shared_ptr_Promise_NativeBuffer___java(getNativeBuffer))
 
   private companion object {
     /**
@@ -37,8 +69,8 @@ data class Frame(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(width: Double, height: Double, data: String): Frame {
-      return Frame(width, height, data)
+    private fun fromCpp(isValid: Boolean, width: Double, height: Double, bytesPerRow: Double, planesCount: Double, isMirrored: Boolean, timestamp: Double, orientation: Orientation, pixelFormat: PixelFormat, toArrayBuffer: Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___, toString: Func_std__shared_ptr_Promise_std__string__, getNativeBuffer: Func_std__shared_ptr_Promise_NativeBuffer__): Frame {
+      return Frame(isValid, width, height, bytesPerRow, planesCount, isMirrored, timestamp, orientation, pixelFormat, toArrayBuffer, toString, getNativeBuffer)
     }
   }
 }

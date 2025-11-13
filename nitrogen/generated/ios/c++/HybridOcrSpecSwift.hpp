@@ -14,10 +14,24 @@ namespace NitroOcr { class HybridOcrSpec_cxx; }
 
 // Forward declaration of `Frame` to properly resolve imports.
 namespace margelo::nitro::ocr { struct Frame; }
+// Forward declaration of `Orientation` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class Orientation; }
+// Forward declaration of `PixelFormat` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class PixelFormat; }
+// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
+namespace NitroModules { class ArrayBufferHolder; }
+// Forward declaration of `NativeBuffer` to properly resolve imports.
+namespace margelo::nitro::ocr { struct NativeBuffer; }
 
 #include <string>
 #include <NitroModules/Promise.hpp>
 #include "Frame.hpp"
+#include "Orientation.hpp"
+#include "PixelFormat.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
+#include <functional>
+#include <NitroModules/ArrayBufferHolder.hpp>
+#include "NativeBuffer.hpp"
 
 #include "NitroOcr-Swift-Cxx-Umbrella.hpp"
 
@@ -73,6 +87,22 @@ namespace margelo::nitro::ocr {
     }
     inline std::shared_ptr<Promise<std::string>> scanFrame(const Frame& frame) override {
       auto __result = _swiftPart.scanFrame(std::forward<decltype(frame)>(frame));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::string>> scanImage(const std::string& path) override {
+      auto __result = _swiftPart.scanImage(path);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<std::string>> scanImageWithRegion(const std::string& path, double x, double y, double width, double height) override {
+      auto __result = _swiftPart.scanImageWithRegion(path, std::forward<decltype(x)>(x), std::forward<decltype(y)>(y), std::forward<decltype(width)>(width), std::forward<decltype(height)>(height));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

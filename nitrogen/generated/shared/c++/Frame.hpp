@@ -23,9 +23,20 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `Orientation` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class Orientation; }
+// Forward declaration of `PixelFormat` to properly resolve imports.
+namespace margelo::nitro::ocr { enum class PixelFormat; }
+// Forward declaration of `NativeBuffer` to properly resolve imports.
+namespace margelo::nitro::ocr { struct NativeBuffer; }
 
-
+#include "Orientation.hpp"
+#include "PixelFormat.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/Promise.hpp>
+#include <functional>
 #include <string>
+#include "NativeBuffer.hpp"
 
 namespace margelo::nitro::ocr {
 
@@ -34,13 +45,22 @@ namespace margelo::nitro::ocr {
    */
   struct Frame {
   public:
+    bool isValid     SWIFT_PRIVATE;
     double width     SWIFT_PRIVATE;
     double height     SWIFT_PRIVATE;
-    std::string data     SWIFT_PRIVATE;
+    double bytesPerRow     SWIFT_PRIVATE;
+    double planesCount     SWIFT_PRIVATE;
+    bool isMirrored     SWIFT_PRIVATE;
+    double timestamp     SWIFT_PRIVATE;
+    Orientation orientation     SWIFT_PRIVATE;
+    PixelFormat pixelFormat     SWIFT_PRIVATE;
+    std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()> toArrayBuffer     SWIFT_PRIVATE;
+    std::function<std::shared_ptr<Promise<std::string>>()> toString     SWIFT_PRIVATE;
+    std::function<std::shared_ptr<Promise<NativeBuffer>>()> getNativeBuffer     SWIFT_PRIVATE;
 
   public:
     Frame() = default;
-    explicit Frame(double width, double height, std::string data): width(width), height(height), data(data) {}
+    explicit Frame(bool isValid, double width, double height, double bytesPerRow, double planesCount, bool isMirrored, double timestamp, Orientation orientation, PixelFormat pixelFormat, std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()> toArrayBuffer, std::function<std::shared_ptr<Promise<std::string>>()> toString, std::function<std::shared_ptr<Promise<NativeBuffer>>()> getNativeBuffer): isValid(isValid), width(width), height(height), bytesPerRow(bytesPerRow), planesCount(planesCount), isMirrored(isMirrored), timestamp(timestamp), orientation(orientation), pixelFormat(pixelFormat), toArrayBuffer(toArrayBuffer), toString(toString), getNativeBuffer(getNativeBuffer) {}
   };
 
 } // namespace margelo::nitro::ocr
@@ -53,16 +73,34 @@ namespace margelo::nitro {
     static inline margelo::nitro::ocr::Frame fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::ocr::Frame(
+        JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, "isValid")),
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "width")),
         JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "height")),
-        JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, "data"))
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "bytesPerRow")),
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "planesCount")),
+        JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, "isMirrored")),
+        JSIConverter<double>::fromJSI(runtime, obj.getProperty(runtime, "timestamp")),
+        JSIConverter<margelo::nitro::ocr::Orientation>::fromJSI(runtime, obj.getProperty(runtime, "orientation")),
+        JSIConverter<margelo::nitro::ocr::PixelFormat>::fromJSI(runtime, obj.getProperty(runtime, "pixelFormat")),
+        JSIConverter<std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>>::fromJSI(runtime, obj.getProperty(runtime, "toArrayBuffer")),
+        JSIConverter<std::function<std::shared_ptr<Promise<std::string>>()>>::fromJSI(runtime, obj.getProperty(runtime, "toString")),
+        JSIConverter<std::function<std::shared_ptr<Promise<margelo::nitro::ocr::NativeBuffer>>()>>::fromJSI(runtime, obj.getProperty(runtime, "getNativeBuffer"))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::ocr::Frame& arg) {
       jsi::Object obj(runtime);
+      obj.setProperty(runtime, "isValid", JSIConverter<bool>::toJSI(runtime, arg.isValid));
       obj.setProperty(runtime, "width", JSIConverter<double>::toJSI(runtime, arg.width));
       obj.setProperty(runtime, "height", JSIConverter<double>::toJSI(runtime, arg.height));
-      obj.setProperty(runtime, "data", JSIConverter<std::string>::toJSI(runtime, arg.data));
+      obj.setProperty(runtime, "bytesPerRow", JSIConverter<double>::toJSI(runtime, arg.bytesPerRow));
+      obj.setProperty(runtime, "planesCount", JSIConverter<double>::toJSI(runtime, arg.planesCount));
+      obj.setProperty(runtime, "isMirrored", JSIConverter<bool>::toJSI(runtime, arg.isMirrored));
+      obj.setProperty(runtime, "timestamp", JSIConverter<double>::toJSI(runtime, arg.timestamp));
+      obj.setProperty(runtime, "orientation", JSIConverter<margelo::nitro::ocr::Orientation>::toJSI(runtime, arg.orientation));
+      obj.setProperty(runtime, "pixelFormat", JSIConverter<margelo::nitro::ocr::PixelFormat>::toJSI(runtime, arg.pixelFormat));
+      obj.setProperty(runtime, "toArrayBuffer", JSIConverter<std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>>::toJSI(runtime, arg.toArrayBuffer));
+      obj.setProperty(runtime, "toString", JSIConverter<std::function<std::shared_ptr<Promise<std::string>>()>>::toJSI(runtime, arg.toString));
+      obj.setProperty(runtime, "getNativeBuffer", JSIConverter<std::function<std::shared_ptr<Promise<margelo::nitro::ocr::NativeBuffer>>()>>::toJSI(runtime, arg.getNativeBuffer));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -73,9 +111,18 @@ namespace margelo::nitro {
       if (!nitro::isPlainObject(runtime, obj)) {
         return false;
       }
+      if (!JSIConverter<bool>::canConvert(runtime, obj.getProperty(runtime, "isValid"))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, "width"))) return false;
       if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, "height"))) return false;
-      if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, "data"))) return false;
+      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, "bytesPerRow"))) return false;
+      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, "planesCount"))) return false;
+      if (!JSIConverter<bool>::canConvert(runtime, obj.getProperty(runtime, "isMirrored"))) return false;
+      if (!JSIConverter<double>::canConvert(runtime, obj.getProperty(runtime, "timestamp"))) return false;
+      if (!JSIConverter<margelo::nitro::ocr::Orientation>::canConvert(runtime, obj.getProperty(runtime, "orientation"))) return false;
+      if (!JSIConverter<margelo::nitro::ocr::PixelFormat>::canConvert(runtime, obj.getProperty(runtime, "pixelFormat"))) return false;
+      if (!JSIConverter<std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>>::canConvert(runtime, obj.getProperty(runtime, "toArrayBuffer"))) return false;
+      if (!JSIConverter<std::function<std::shared_ptr<Promise<std::string>>()>>::canConvert(runtime, obj.getProperty(runtime, "toString"))) return false;
+      if (!JSIConverter<std::function<std::shared_ptr<Promise<margelo::nitro::ocr::NativeBuffer>>()>>::canConvert(runtime, obj.getProperty(runtime, "getNativeBuffer"))) return false;
       return true;
     }
   };

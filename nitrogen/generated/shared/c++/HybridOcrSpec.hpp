@@ -53,6 +53,8 @@ namespace margelo::nitro::ocr {
       // Methods
       virtual std::string scan(const std::string& input) = 0;
       virtual std::shared_ptr<Promise<std::string>> scanFrame(const Frame& frame) = 0;
+      virtual std::shared_ptr<Promise<std::string>> scanImage(const std::string& path) = 0;
+      virtual std::shared_ptr<Promise<std::string>> scanImageWithRegion(const std::string& path, double x, double y, double width, double height) = 0;
 
     protected:
       // Hybrid Setup

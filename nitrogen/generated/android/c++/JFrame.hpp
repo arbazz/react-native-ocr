@@ -10,6 +10,21 @@
 #include <fbjni/fbjni.h>
 #include "Frame.hpp"
 
+#include "JFunc_std__shared_ptr_Promise_NativeBuffer__.hpp"
+#include "JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___.hpp"
+#include "JFunc_std__shared_ptr_Promise_std__string__.hpp"
+#include "JNativeBuffer.hpp"
+#include "JOrientation.hpp"
+#include "JPixelFormat.hpp"
+#include "NativeBuffer.hpp"
+#include "Orientation.hpp"
+#include "PixelFormat.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/JArrayBuffer.hpp>
+#include <NitroModules/JPromise.hpp>
+#include <NitroModules/JUnit.hpp>
+#include <NitroModules/Promise.hpp>
+#include <functional>
 #include <string>
 
 namespace margelo::nitro::ocr {
@@ -31,16 +46,73 @@ namespace margelo::nitro::ocr {
     [[nodiscard]]
     Frame toCpp() const {
       static const auto clazz = javaClassStatic();
+      static const auto fieldIsValid = clazz->getField<jboolean>("isValid");
+      jboolean isValid = this->getFieldValue(fieldIsValid);
       static const auto fieldWidth = clazz->getField<double>("width");
       double width = this->getFieldValue(fieldWidth);
       static const auto fieldHeight = clazz->getField<double>("height");
       double height = this->getFieldValue(fieldHeight);
-      static const auto fieldData = clazz->getField<jni::JString>("data");
-      jni::local_ref<jni::JString> data = this->getFieldValue(fieldData);
+      static const auto fieldBytesPerRow = clazz->getField<double>("bytesPerRow");
+      double bytesPerRow = this->getFieldValue(fieldBytesPerRow);
+      static const auto fieldPlanesCount = clazz->getField<double>("planesCount");
+      double planesCount = this->getFieldValue(fieldPlanesCount);
+      static const auto fieldIsMirrored = clazz->getField<jboolean>("isMirrored");
+      jboolean isMirrored = this->getFieldValue(fieldIsMirrored);
+      static const auto fieldTimestamp = clazz->getField<double>("timestamp");
+      double timestamp = this->getFieldValue(fieldTimestamp);
+      static const auto fieldOrientation = clazz->getField<JOrientation>("orientation");
+      jni::local_ref<JOrientation> orientation = this->getFieldValue(fieldOrientation);
+      static const auto fieldPixelFormat = clazz->getField<JPixelFormat>("pixelFormat");
+      jni::local_ref<JPixelFormat> pixelFormat = this->getFieldValue(fieldPixelFormat);
+      static const auto fieldToArrayBuffer = clazz->getField<JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___::javaobject>("toArrayBuffer");
+      jni::local_ref<JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___::javaobject> toArrayBuffer = this->getFieldValue(fieldToArrayBuffer);
+      static const auto fieldToString = clazz->getField<JFunc_std__shared_ptr_Promise_std__string__::javaobject>("toString");
+      jni::local_ref<JFunc_std__shared_ptr_Promise_std__string__::javaobject> toString = this->getFieldValue(fieldToString);
+      static const auto fieldGetNativeBuffer = clazz->getField<JFunc_std__shared_ptr_Promise_NativeBuffer__::javaobject>("getNativeBuffer");
+      jni::local_ref<JFunc_std__shared_ptr_Promise_NativeBuffer__::javaobject> getNativeBuffer = this->getFieldValue(fieldGetNativeBuffer);
       return Frame(
+        static_cast<bool>(isValid),
         width,
         height,
-        data->toStdString()
+        bytesPerRow,
+        planesCount,
+        static_cast<bool>(isMirrored),
+        timestamp,
+        orientation->toCpp(),
+        pixelFormat->toCpp(),
+        [&]() -> std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()> {
+          if (toArrayBuffer->isInstanceOf(JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____cxx::javaClassStatic())) [[likely]] {
+            auto downcast = jni::static_ref_cast<JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____cxx::javaobject>(toArrayBuffer);
+            return downcast->cthis()->getFunction();
+          } else {
+            auto toArrayBufferRef = jni::make_global(toArrayBuffer);
+            return [toArrayBufferRef]() -> std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> {
+              return toArrayBufferRef->invoke();
+            };
+          }
+        }(),
+        [&]() -> std::function<std::shared_ptr<Promise<std::string>>()> {
+          if (toString->isInstanceOf(JFunc_std__shared_ptr_Promise_std__string___cxx::javaClassStatic())) [[likely]] {
+            auto downcast = jni::static_ref_cast<JFunc_std__shared_ptr_Promise_std__string___cxx::javaobject>(toString);
+            return downcast->cthis()->getFunction();
+          } else {
+            auto toStringRef = jni::make_global(toString);
+            return [toStringRef]() -> std::shared_ptr<Promise<std::string>> {
+              return toStringRef->invoke();
+            };
+          }
+        }(),
+        [&]() -> std::function<std::shared_ptr<Promise<NativeBuffer>>()> {
+          if (getNativeBuffer->isInstanceOf(JFunc_std__shared_ptr_Promise_NativeBuffer___cxx::javaClassStatic())) [[likely]] {
+            auto downcast = jni::static_ref_cast<JFunc_std__shared_ptr_Promise_NativeBuffer___cxx::javaobject>(getNativeBuffer);
+            return downcast->cthis()->getFunction();
+          } else {
+            auto getNativeBufferRef = jni::make_global(getNativeBuffer);
+            return [getNativeBufferRef]() -> std::shared_ptr<Promise<NativeBuffer>> {
+              return getNativeBufferRef->invoke();
+            };
+          }
+        }()
       );
     }
 
@@ -50,14 +122,23 @@ namespace margelo::nitro::ocr {
      */
     [[maybe_unused]]
     static jni::local_ref<JFrame::javaobject> fromCpp(const Frame& value) {
-      using JSignature = JFrame(double, double, jni::alias_ref<jni::JString>);
+      using JSignature = JFrame(jboolean, double, double, double, double, jboolean, double, jni::alias_ref<JOrientation>, jni::alias_ref<JPixelFormat>, jni::alias_ref<JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___::javaobject>, jni::alias_ref<JFunc_std__shared_ptr_Promise_std__string__::javaobject>, jni::alias_ref<JFunc_std__shared_ptr_Promise_NativeBuffer__::javaobject>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
+        value.isValid,
         value.width,
         value.height,
-        jni::make_jstring(value.data)
+        value.bytesPerRow,
+        value.planesCount,
+        value.isMirrored,
+        value.timestamp,
+        JOrientation::fromCpp(value.orientation),
+        JPixelFormat::fromCpp(value.pixelFormat),
+        JFunc_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____cxx::fromCpp(value.toArrayBuffer),
+        JFunc_std__shared_ptr_Promise_std__string___cxx::fromCpp(value.toString),
+        JFunc_std__shared_ptr_Promise_NativeBuffer___cxx::fromCpp(value.getNativeBuffer)
       );
     }
   };

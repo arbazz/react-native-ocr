@@ -8,8 +8,12 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
+namespace NitroModules { class ArrayBufferHolder; }
 // Forward declaration of `HybridOcrSpec` to properly resolve imports.
 namespace margelo::nitro::ocr { class HybridOcrSpec; }
+// Forward declaration of `NativeBuffer` to properly resolve imports.
+namespace margelo::nitro::ocr { struct NativeBuffer; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridOcrSpec_cxx` to properly resolve imports.
@@ -17,6 +21,9 @@ namespace NitroOcr { class HybridOcrSpec_cxx; }
 
 // Include C++ defined types
 #include "HybridOcrSpec.hpp"
+#include "NativeBuffer.hpp"
+#include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/ArrayBufferHolder.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
@@ -85,6 +92,143 @@ namespace margelo::nitro::ocr::bridge::swift {
   Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
     return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>
+  /**
+   * Specialized version of `std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>`.
+   */
+  using Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ = std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>;
+  /**
+   * Wrapper class for a `std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>`, this can be used from Swift.
+   */
+  class Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____Wrapper final {
+  public:
+    explicit Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____Wrapper(std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>&& func): _function(std::make_unique<std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>>(std::move(func))) {}
+    inline std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> call() const noexcept {
+      auto __result = _function->operator()();
+      return __result;
+    }
+  private:
+    std::unique_ptr<std::function<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ create_Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____Wrapper wrap_Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ value) noexcept {
+    return Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ = std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> create_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___() noexcept {
+    return Promise<std::shared_ptr<ArrayBuffer>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<ArrayBuffer>> wrap_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<ArrayBuffer>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<ArrayBuffer>&)>`.
+   */
+  using Func_void_std__shared_ptr_ArrayBuffer_ = std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<ArrayBuffer>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_ArrayBuffer__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_ArrayBuffer__Wrapper(std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>>(std::move(func))) {}
+    inline void call(ArrayBufferHolder result) const noexcept {
+      _function->operator()(result.getArrayBuffer());
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_ArrayBuffer_ create_Func_void_std__shared_ptr_ArrayBuffer_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_ArrayBuffer__Wrapper wrap_Func_void_std__shared_ptr_ArrayBuffer_(Func_void_std__shared_ptr_ArrayBuffer_ value) noexcept {
+    return Func_void_std__shared_ptr_ArrayBuffer__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<std::shared_ptr<Promise<std::string>>()>
+  /**
+   * Specialized version of `std::function<std::shared_ptr<Promise<std::string>>()>`.
+   */
+  using Func_std__shared_ptr_Promise_std__string__ = std::function<std::shared_ptr<Promise<std::string>>()>;
+  /**
+   * Wrapper class for a `std::function<std::shared_ptr<Promise<std::string>>()>`, this can be used from Swift.
+   */
+  class Func_std__shared_ptr_Promise_std__string___Wrapper final {
+  public:
+    explicit Func_std__shared_ptr_Promise_std__string___Wrapper(std::function<std::shared_ptr<Promise<std::string>>()>&& func): _function(std::make_unique<std::function<std::shared_ptr<Promise<std::string>>()>>(std::move(func))) {}
+    inline std::shared_ptr<Promise<std::string>> call() const noexcept {
+      auto __result = _function->operator()();
+      return __result;
+    }
+  private:
+    std::unique_ptr<std::function<std::shared_ptr<Promise<std::string>>()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_std__shared_ptr_Promise_std__string__ create_Func_std__shared_ptr_Promise_std__string__(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_std__shared_ptr_Promise_std__string___Wrapper wrap_Func_std__shared_ptr_Promise_std__string__(Func_std__shared_ptr_Promise_std__string__ value) noexcept {
+    return Func_std__shared_ptr_Promise_std__string___Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<std::shared_ptr<Promise<NativeBuffer>>()>
+  /**
+   * Specialized version of `std::function<std::shared_ptr<Promise<NativeBuffer>>()>`.
+   */
+  using Func_std__shared_ptr_Promise_NativeBuffer__ = std::function<std::shared_ptr<Promise<NativeBuffer>>()>;
+  /**
+   * Wrapper class for a `std::function<std::shared_ptr<Promise<NativeBuffer>>()>`, this can be used from Swift.
+   */
+  class Func_std__shared_ptr_Promise_NativeBuffer___Wrapper final {
+  public:
+    explicit Func_std__shared_ptr_Promise_NativeBuffer___Wrapper(std::function<std::shared_ptr<Promise<NativeBuffer>>()>&& func): _function(std::make_unique<std::function<std::shared_ptr<Promise<NativeBuffer>>()>>(std::move(func))) {}
+    inline std::shared_ptr<Promise<NativeBuffer>> call() const noexcept {
+      auto __result = _function->operator()();
+      return __result;
+    }
+  private:
+    std::unique_ptr<std::function<std::shared_ptr<Promise<NativeBuffer>>()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_std__shared_ptr_Promise_NativeBuffer__ create_Func_std__shared_ptr_Promise_NativeBuffer__(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_std__shared_ptr_Promise_NativeBuffer___Wrapper wrap_Func_std__shared_ptr_Promise_NativeBuffer__(Func_std__shared_ptr_Promise_NativeBuffer__ value) noexcept {
+    return Func_std__shared_ptr_Promise_NativeBuffer___Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<NativeBuffer>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<NativeBuffer>>`.
+   */
+  using std__shared_ptr_Promise_NativeBuffer__ = std::shared_ptr<Promise<NativeBuffer>>;
+  inline std::shared_ptr<Promise<NativeBuffer>> create_std__shared_ptr_Promise_NativeBuffer__() noexcept {
+    return Promise<NativeBuffer>::create();
+  }
+  inline PromiseHolder<NativeBuffer> wrap_std__shared_ptr_Promise_NativeBuffer__(std::shared_ptr<Promise<NativeBuffer>> promise) noexcept {
+    return PromiseHolder<NativeBuffer>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const NativeBuffer& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const NativeBuffer&)>`.
+   */
+  using Func_void_NativeBuffer = std::function<void(const NativeBuffer& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const NativeBuffer& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_NativeBuffer_Wrapper final {
+  public:
+    explicit Func_void_NativeBuffer_Wrapper(std::function<void(const NativeBuffer& /* result */)>&& func): _function(std::make_unique<std::function<void(const NativeBuffer& /* result */)>>(std::move(func))) {}
+    inline void call(NativeBuffer result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const NativeBuffer& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_NativeBuffer create_Func_void_NativeBuffer(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_NativeBuffer_Wrapper wrap_Func_void_NativeBuffer(Func_void_NativeBuffer value) noexcept {
+    return Func_void_NativeBuffer_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::shared_ptr<HybridOcrSpec>

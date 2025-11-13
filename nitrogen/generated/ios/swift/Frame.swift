@@ -18,10 +18,30 @@ public extension Frame {
   /**
    * Create a new instance of `Frame`.
    */
-  init(width: Double, height: Double, data: String) {
-    self.init(width, height, std.string(data))
+  init(isValid: Bool, width: Double, height: Double, bytesPerRow: Double, planesCount: Double, isMirrored: Bool, timestamp: Double, orientation: Orientation, pixelFormat: PixelFormat, toArrayBuffer: @escaping () -> Promise<ArrayBuffer>, toString: @escaping () -> Promise<String>, getNativeBuffer: @escaping () -> Promise<NativeBuffer>) {
+    self.init(isValid, width, height, bytesPerRow, planesCount, isMirrored, timestamp, orientation, pixelFormat, { () -> bridge.Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ in
+      let __closureWrapper = Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(toArrayBuffer)
+      return bridge.create_Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(__closureWrapper.toUnsafe())
+    }(), { () -> bridge.Func_std__shared_ptr_Promise_std__string__ in
+      let __closureWrapper = Func_std__shared_ptr_Promise_std__string__(toString)
+      return bridge.create_Func_std__shared_ptr_Promise_std__string__(__closureWrapper.toUnsafe())
+    }(), { () -> bridge.Func_std__shared_ptr_Promise_NativeBuffer__ in
+      let __closureWrapper = Func_std__shared_ptr_Promise_NativeBuffer__(getNativeBuffer)
+      return bridge.create_Func_std__shared_ptr_Promise_NativeBuffer__(__closureWrapper.toUnsafe())
+    }())
   }
 
+  var isValid: Bool {
+    @inline(__always)
+    get {
+      return self.__isValid
+    }
+    @inline(__always)
+    set {
+      self.__isValid = newValue
+    }
+  }
+  
   var width: Double {
     @inline(__always)
     get {
@@ -44,14 +64,189 @@ public extension Frame {
     }
   }
   
-  var data: String {
+  var bytesPerRow: Double {
     @inline(__always)
     get {
-      return String(self.__data)
+      return self.__bytesPerRow
     }
     @inline(__always)
     set {
-      self.__data = std.string(newValue)
+      self.__bytesPerRow = newValue
+    }
+  }
+  
+  var planesCount: Double {
+    @inline(__always)
+    get {
+      return self.__planesCount
+    }
+    @inline(__always)
+    set {
+      self.__planesCount = newValue
+    }
+  }
+  
+  var isMirrored: Bool {
+    @inline(__always)
+    get {
+      return self.__isMirrored
+    }
+    @inline(__always)
+    set {
+      self.__isMirrored = newValue
+    }
+  }
+  
+  var timestamp: Double {
+    @inline(__always)
+    get {
+      return self.__timestamp
+    }
+    @inline(__always)
+    set {
+      self.__timestamp = newValue
+    }
+  }
+  
+  var orientation: Orientation {
+    @inline(__always)
+    get {
+      return self.__orientation
+    }
+    @inline(__always)
+    set {
+      self.__orientation = newValue
+    }
+  }
+  
+  var pixelFormat: PixelFormat {
+    @inline(__always)
+    get {
+      return self.__pixelFormat
+    }
+    @inline(__always)
+    set {
+      self.__pixelFormat = newValue
+    }
+  }
+  
+  var toArrayBuffer: () -> Promise<ArrayBuffer> {
+    @inline(__always)
+    get {
+      return { () -> () -> Promise<ArrayBuffer> in
+        let __wrappedFunction = bridge.wrap_Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(self.__toArrayBuffer)
+        return { () -> Promise<ArrayBuffer> in
+          let __result = __wrappedFunction.call()
+          return { () -> Promise<ArrayBuffer> in
+            let __promise = Promise<ArrayBuffer>()
+            let __resolver = { (__result: ArrayBuffer) in
+              __promise.resolve(withResult: __result)
+            }
+            let __rejecter = { (__error: Error) in
+              __promise.reject(withError: __error)
+            }
+            let __resolverCpp = { () -> bridge.Func_void_std__shared_ptr_ArrayBuffer_ in
+              let __closureWrapper = Func_void_std__shared_ptr_ArrayBuffer_(__resolver)
+              return bridge.create_Func_void_std__shared_ptr_ArrayBuffer_(__closureWrapper.toUnsafe())
+            }()
+            let __rejecterCpp = { () -> bridge.Func_void_std__exception_ptr in
+              let __closureWrapper = Func_void_std__exception_ptr(__rejecter)
+              return bridge.create_Func_void_std__exception_ptr(__closureWrapper.toUnsafe())
+            }()
+            let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(__result)
+            __promiseHolder.addOnResolvedListener(__resolverCpp)
+            __promiseHolder.addOnRejectedListener(__rejecterCpp)
+            return __promise
+          }()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__toArrayBuffer = { () -> bridge.Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ in
+        let __closureWrapper = Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(newValue)
+        return bridge.create_Func_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(__closureWrapper.toUnsafe())
+      }()
+    }
+  }
+  
+  var toString: () -> Promise<String> {
+    @inline(__always)
+    get {
+      return { () -> () -> Promise<String> in
+        let __wrappedFunction = bridge.wrap_Func_std__shared_ptr_Promise_std__string__(self.__toString)
+        return { () -> Promise<String> in
+          let __result = __wrappedFunction.call()
+          return { () -> Promise<String> in
+            let __promise = Promise<String>()
+            let __resolver = { (__result: String) in
+              __promise.resolve(withResult: __result)
+            }
+            let __rejecter = { (__error: Error) in
+              __promise.reject(withError: __error)
+            }
+            let __resolverCpp = { () -> bridge.Func_void_std__string in
+              let __closureWrapper = Func_void_std__string(__resolver)
+              return bridge.create_Func_void_std__string(__closureWrapper.toUnsafe())
+            }()
+            let __rejecterCpp = { () -> bridge.Func_void_std__exception_ptr in
+              let __closureWrapper = Func_void_std__exception_ptr(__rejecter)
+              return bridge.create_Func_void_std__exception_ptr(__closureWrapper.toUnsafe())
+            }()
+            let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__string__(__result)
+            __promiseHolder.addOnResolvedListener(__resolverCpp)
+            __promiseHolder.addOnRejectedListener(__rejecterCpp)
+            return __promise
+          }()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__toString = { () -> bridge.Func_std__shared_ptr_Promise_std__string__ in
+        let __closureWrapper = Func_std__shared_ptr_Promise_std__string__(newValue)
+        return bridge.create_Func_std__shared_ptr_Promise_std__string__(__closureWrapper.toUnsafe())
+      }()
+    }
+  }
+  
+  var getNativeBuffer: () -> Promise<NativeBuffer> {
+    @inline(__always)
+    get {
+      return { () -> () -> Promise<NativeBuffer> in
+        let __wrappedFunction = bridge.wrap_Func_std__shared_ptr_Promise_NativeBuffer__(self.__getNativeBuffer)
+        return { () -> Promise<NativeBuffer> in
+          let __result = __wrappedFunction.call()
+          return { () -> Promise<NativeBuffer> in
+            let __promise = Promise<NativeBuffer>()
+            let __resolver = { (__result: NativeBuffer) in
+              __promise.resolve(withResult: __result)
+            }
+            let __rejecter = { (__error: Error) in
+              __promise.reject(withError: __error)
+            }
+            let __resolverCpp = { () -> bridge.Func_void_NativeBuffer in
+              let __closureWrapper = Func_void_NativeBuffer(__resolver)
+              return bridge.create_Func_void_NativeBuffer(__closureWrapper.toUnsafe())
+            }()
+            let __rejecterCpp = { () -> bridge.Func_void_std__exception_ptr in
+              let __closureWrapper = Func_void_std__exception_ptr(__rejecter)
+              return bridge.create_Func_void_std__exception_ptr(__closureWrapper.toUnsafe())
+            }()
+            let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_NativeBuffer__(__result)
+            __promiseHolder.addOnResolvedListener(__resolverCpp)
+            __promiseHolder.addOnRejectedListener(__rejecterCpp)
+            return __promise
+          }()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__getNativeBuffer = { () -> bridge.Func_std__shared_ptr_Promise_NativeBuffer__ in
+        let __closureWrapper = Func_std__shared_ptr_Promise_NativeBuffer__(newValue)
+        return bridge.create_Func_std__shared_ptr_Promise_NativeBuffer__(__closureWrapper.toUnsafe())
+      }()
     }
   }
 }
