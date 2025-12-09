@@ -52,11 +52,58 @@ class HybridOcr: HybridOcrSpec {
             throw NSError(domain: "HybridOcr", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not load image from path: \(cleanPath)"])
         }
         
-        guard let cgImage = image.cgImage else {
+        // Normalize orientation if needed
+        var fixedImage = image
+        if image.imageOrientation != .up {
+            let renderer = UIGraphicsImageRenderer(size: image.size)
+            fixedImage = renderer.image { _ in
+                image.draw(in: CGRect(origin: .zero, size: image.size))
+            }
+        }
+        
+        guard let cgImage = fixedImage.cgImage else {
             throw NSError(domain: "HybridOcr", code: 2, userInfo: [NSLocalizedDescriptionKey: "Could not get CGImage from UIImage"])
         }
 
-        return try await performOCR(on: cgImage, region: region)
+        var imageToProcess = cgImage
+        var croppedImagePath: String? = nil
+        
+        if let region = region {
+            let width = Double(cgImage.width)
+            let height = Double(cgImage.height)
+            let cropRect = CGRect(
+                x: region.minX * width,
+                y: region.minY * height,
+                width: region.width * width,
+                height: region.height * height
+            )
+            
+            if let cropped = cgImage.cropping(to: cropRect) {
+                imageToProcess = cropped
+                
+                // Save cropped image to temp file for visual debugging
+                let tempDir = FileManager.default.temporaryDirectory
+                let fileName = UUID().uuidString + ".jpg"
+                let fileURL = tempDir.appendingPathComponent(fileName)
+                
+                let uiImage = UIImage(cgImage: cropped)
+                if let data = uiImage.jpegData(compressionQuality: 0.8) {
+                    try? data.write(to: fileURL)
+                    croppedImagePath = fileURL.absoluteString
+                }
+            }
+        }
+
+        let ocrText = try await performOCR(on: imageToProcess, region: nil)
+        
+        // Return results as JSON
+        let result: [String: Any] = [
+            "text": ocrText,
+            "croppedImagePath": croppedImagePath ?? ""
+        ]
+        
+        let jsonData = try JSONSerialization.data(withJSONObject: result, options: [])
+        return String(data: jsonData, encoding: .utf8) ?? ""
     }
 
     private func performOCR(on pixelBuffer: CVPixelBuffer, region: CGRect?) async throws -> String {

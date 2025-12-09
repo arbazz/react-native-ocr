@@ -1,16 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native'
 import {
     Camera,
     useCameraDevice,
 } from 'react-native-vision-camera'
 import { HybridOcr } from 'react-native-ocr'
 
+// PROGRAMMATIC SCAN REGION (Normalized 0-1)
+// Adjust these values to change the scan area in the code
+const SCAN_REGION = {
+    x: 0.1,      // 10% from left
+    y: 0.3,      // 30% from top
+    width: 0.8,  // 80% of width
+    height: 0.2  // 20% of height
+}
+
+const SCREEN_WIDTH = Dimensions.get('window').width
+const SCREEN_HEIGHT = Dimensions.get('window').height
+
 export default function CameraView() {
     const camera = useRef<Camera>(null)
     const device = useCameraDevice('back')
-    const [ocrText, setOcrText] = useState('')
+
+    const [ocrResult, setOcrResult] = useState<{ text: string, croppedImagePath?: string } | null>(null)
     const [isScanning, setIsScanning] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         (async () => {
@@ -23,36 +37,38 @@ export default function CameraView() {
         if (!camera.current) return
 
         setIsScanning(true)
+        setError(null)
+        setOcrResult(null)
+
         try {
             // Take a photo
             const photo = await camera.current.takePhoto()
-
             console.log('Photo captured:', photo.path)
-
-            // Define the focus region (normalized coordinates 0-1)
-            // This matches the overlay box on screen
-            const focusRegion = {
-                x: 0.1,      // 10% from left
-                y: 0.3,      // 30% from top
-                width: 0.8,  // 80% of width
-                height: 0.4  // 40% of height
-            }
+            console.log('Scanning Region:', SCAN_REGION)
 
             // Run OCR on the photo with focus region
-            const results = await HybridOcr.scanImageWithRegion(
+            // Now returns JSON string: { text: "...", croppedImagePath: "..." }
+            const jsonString = await HybridOcr.scanImageWithRegion(
                 photo.path,
-                focusRegion.x,
-                focusRegion.y,
-                focusRegion.width,
-                focusRegion.height
+                SCAN_REGION.x,
+                SCAN_REGION.y,
+                SCAN_REGION.width,
+                SCAN_REGION.height
             )
 
-            console.log('OCR Results:', results)
-            setOcrText(results || 'No text detected')
+            console.log('OCR Raw Result:', jsonString)
+
+            try {
+                const parsed = JSON.parse(jsonString)
+                setOcrResult(parsed)
+            } catch (e) {
+                // Fallback for older native module version or plain string return
+                setOcrResult({ text: jsonString })
+            }
 
         } catch (error: any) {
             console.error('Error:', error)
-            setOcrText('Error: ' + error.message)
+            setError(error.message)
         } finally {
             setIsScanning(false)
         }
@@ -70,13 +86,23 @@ export default function CameraView() {
                 photo={true}
             />
 
-            {/* Focus Frame Overlay */}
-            <View style={styles.focusFrame}>
+            {/* Static Focus Frame Visualizer */}
+            <View
+                style={[
+                    styles.focusFrame,
+                    {
+                        left: `${SCAN_REGION.x * 100}%`,
+                        top: `${SCAN_REGION.y * 100}%`,
+                        width: `${SCAN_REGION.width * 100}%`,
+                        height: `${SCAN_REGION.height * 100}%`
+                    }
+                ]}
+            >
                 <View style={[styles.corner, styles.topLeft]} />
                 <View style={[styles.corner, styles.topRight]} />
                 <View style={[styles.corner, styles.bottomLeft]} />
                 <View style={[styles.corner, styles.bottomRight]} />
-                <Text style={styles.focusText}>Position text here</Text>
+                <Text style={styles.focusText}>Scanning Area</Text>
             </View>
 
             <TouchableOpacity
@@ -89,11 +115,30 @@ export default function CameraView() {
                 </Text>
             </TouchableOpacity>
 
-            {ocrText ? (
+            {/* Results Display */}
+            {(ocrResult || error) && (
                 <ScrollView style={styles.resultBox}>
-                    <Text style={styles.resultText}>{ocrText}</Text>
+                    {error ? (
+                        <Text style={styles.errorText}>Error: {error}</Text>
+                    ) : (
+                        <>
+                            <Text style={styles.resultLabel}>Result:</Text>
+                            <Text style={styles.resultText}>{ocrResult?.text || 'No text found'}</Text>
+
+                            {ocrResult?.croppedImagePath ? (
+                                <>
+                                    <Text style={styles.resultLabel}>Cropped Image:</Text>
+                                    <Image
+                                        source={{ uri: ocrResult.croppedImagePath }}
+                                        style={styles.croppedImage}
+                                        resizeMode="contain"
+                                    />
+                                </>
+                            ) : null}
+                        </>
+                    )}
                 </ScrollView>
-            ) : null}
+            )}
         </View>
     )
 }
@@ -108,15 +153,11 @@ const styles = StyleSheet.create({
     },
     focusFrame: {
         position: 'absolute',
-        left: '10%',
-        top: '30%',
-        width: '80%',
-        height: '40%',
         borderWidth: 2,
-        borderColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 12,
-        justifyContent: 'center',
+        borderColor: 'rgba(0, 255, 0, 0.8)',
+        borderRadius: 4,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     corner: {
         position: 'absolute',
@@ -130,36 +171,33 @@ const styles = StyleSheet.create({
         left: -2,
         borderRightWidth: 0,
         borderBottomWidth: 0,
-        borderTopLeftRadius: 12,
     },
     topRight: {
         top: -2,
         right: -2,
         borderLeftWidth: 0,
         borderBottomWidth: 0,
-        borderTopRightRadius: 12,
     },
     bottomLeft: {
         bottom: -2,
         left: -2,
         borderRightWidth: 0,
         borderTopWidth: 0,
-        borderBottomLeftRadius: 12,
     },
     bottomRight: {
         bottom: -2,
         right: -2,
         borderLeftWidth: 0,
         borderTopWidth: 0,
-        borderBottomRightRadius: 12,
     },
     focusText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 14,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 6,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+        overflow: 'hidden',
     },
     captureButton: {
         position: 'absolute',
@@ -169,6 +207,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         paddingVertical: 15,
         borderRadius: 30,
+        zIndex: 20,
     },
     captureButtonDisabled: {
         backgroundColor: '#cccccc',
@@ -180,17 +219,37 @@ const styles = StyleSheet.create({
     },
     resultBox: {
         position: 'absolute',
-        top: 100,
+        top: 60,
         left: 20,
         right: 20,
-        maxHeight: 200,
-        backgroundColor: 'rgba(0,0,0,0.8)',
+        maxHeight: 300,
+        backgroundColor: 'rgba(0,0,0,0.9)',
         padding: 15,
         borderRadius: 10,
+        zIndex: 30,
+    },
+    resultLabel: {
+        color: '#aaaaaa',
+        fontSize: 12,
+        marginBottom: 4,
+        marginTop: 10,
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
     },
     resultText: {
         color: 'white',
         fontSize: 16,
         lineHeight: 24,
     },
+    errorText: {
+        color: '#ff4444',
+        fontSize: 14,
+    },
+    croppedImage: {
+        width: '100%',
+        height: 100,
+        marginTop: 5,
+        backgroundColor: '#333',
+        borderRadius: 4,
+    }
 })
